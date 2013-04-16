@@ -1,5 +1,8 @@
 package com.esc.koib.gui;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -12,16 +15,41 @@ import com.actionbarsherlock.view.MenuItem;
 import com.esc.koib.R;
 import com.esc.koib.domain.UserAccount;
 import com.esc.koib.gui.UseraccountFragment.OnLoggedInListener;
+import com.esc.koib.repository.UserAccountRepository;
+import com.esc.koib.repository.impl.ImageRepositoryPicasaImpl;
+import com.esc.koib.repository.impl.TagQueryPicasaResultFormatter;
+import com.esc.koib.repository.impl.TagsRepositoryPicasaImpl;
+import com.esc.koib.repository.impl.UserAccountRepositoryFileImpl;
+import com.esc.koib.service.ImageService;
+import com.esc.koib.service.TagServiceListener;
+import com.esc.koib.service.UserAccountService;
+import com.esc.koib.service.impl.ImageServiceImpl;
+import com.esc.koib.service.impl.TagServiceImpl;
+import com.esc.koib.service.impl.UserAccountServiceImpl;
 
 
 
-public class MainActivity extends SherlockFragmentActivity implements OnLoggedInListener {
+public class MainActivity extends SherlockFragmentActivity implements OnLoggedInListener, TagServiceListener {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);		
+		
+		UserAccountServiceImpl accService = new UserAccountServiceImpl(new UserAccountRepositoryFileImpl(this));
+		TagServiceImpl tagService = new TagServiceImpl(new TagsRepositoryPicasaImpl(new TagQueryPicasaResultFormatter()));
+		tagService.setServiceListener(this);
+		tagService.queryTagsAsync(accService.getActive());
+		
+		/*
+		FragmentManager fm = getSupportFragmentManager();
+		FragmentTransaction ft = fm.beginTransaction();
+		ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+		ThumbnailsFragment tnf = new ThumbnailsFragment();
+		ft.replace(R.id.container, tnf);
+		ft.commit();
+		*/
 	}
 
 	
@@ -54,26 +82,13 @@ public class MainActivity extends SherlockFragmentActivity implements OnLoggedIn
 				FragmentTransaction ft = fm.beginTransaction();
 				ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
 				UseraccountFragment uaf = new UseraccountFragment();
-				ft.replace(R.id.scrollContainer, uaf);
-				//ft.add(R.id.scrollContainer, uaf);
+				uaf.setLoggedInListener(this);
+				ft.replace(R.id.container, uaf);
 				ft.addToBackStack(null);
 				ft.commit();
 				
 				return true;
 				
-				/*
-				FragmentManager fm = getSupportFragmentManager();
-				FragmentTransaction ft = fm.beginTransaction();
-				ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-				ThumbnailsFragment tnf = new ThumbnailsFragment();
-				ft.replace(R.id.scrollContainer, tnf, "session2Content");
-				
-				// add to stack as root, so the stack count is 1
-				ft.addToBackStack("session2Content");
-				ft.commit();
-				
-				return true;
-				*/
 		}
 		// TODO Auto-generated method stub
 		return super.onOptionsItemSelected(item);
@@ -83,13 +98,15 @@ public class MainActivity extends SherlockFragmentActivity implements OnLoggedIn
 
 	@Override
 	public void OnUserAccountLoggedIn(UserAccount account) {
+		
+		
+	}
 
-		FragmentManager fm = getSupportFragmentManager();
-		FragmentTransaction ft = fm.beginTransaction();
-		ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-		ThumbnailsFragment tnf = new ThumbnailsFragment();
-		ft.replace(R.id.scrollContainer, tnf);
-		ft.commit();
+
+
+	@Override
+	public void tagsQueryDone() {
+		// TODO Auto-generated method stub
 		
 	}
 	

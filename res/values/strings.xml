@@ -17,5 +17,8 @@
     <string name="logout_in_progress">Logging out&#8230;</string>
     <string name="logout_successful">%1$s successfully logged out!</string>
     <string name="logout_failed">Logout failed!</string>
+    <string name="title_activity_search">SearchActivity</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
 
 </resources>

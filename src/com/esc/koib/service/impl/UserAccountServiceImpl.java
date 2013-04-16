@@ -84,19 +84,17 @@ public class UserAccountServiceImpl implements UserAccountService {
 			
 			try {
 				
-			URL url = new URL(	String.format(	"https://www.google.com/accounts/ClientLogin?Email=%s&Passwd=%s&service=%s&accountType=%s",
+				URL url = new URL(	String.format(	"https://www.google.com/accounts/ClientLogin?Email=%s&Passwd=%s&service=%s&accountType=%s",
 												account.getUsername(), 
 												account.getPassword(), 
 												"lh2", 
 												"GOOGLE"	)	);
 			
-			HttpURLConnection con = (HttpURLConnection) url.openConnection();
-			String token = parseToken(con.getInputStream());
-			
-			return new UserAccount.Builder().userName(account.getUsername()).password(account.getPassword()).token(token).build();
-			
-			
+				HttpURLConnection con = (HttpURLConnection) url.openConnection();
+				String token = parseToken(con.getInputStream());
 				
+				return new UserAccount.Builder().userName(account.getUsername()).password(account.getPassword()).token(token).build();
+								
 			} catch (MalformedURLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

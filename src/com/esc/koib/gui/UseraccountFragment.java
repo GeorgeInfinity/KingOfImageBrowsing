@@ -146,7 +146,9 @@ public class UseraccountFragment extends SherlockFragment implements View.OnClic
 		
 		updateViewElements();
 		displayMsg(msg);
-		delegate.OnUserAccountLoggedIn(account);
+		
+		if(account != null)
+			delegate.OnUserAccountLoggedIn(account);
 	}
 	
 	
