@@ -24,11 +24,23 @@ import com.esc.koib.service.UserAccountService;
  */
 public class UserAccountServiceImpl implements UserAccountService {
 
+	private static final UserAccountService instance = new UserAccountServiceImpl();
 	private UserAccountRepository repository = null;
 	private AccountServiceListener delegate = null;
 	
-	public UserAccountServiceImpl(UserAccountRepository repository) {
-		this.repository = repository;
+	
+	private UserAccountServiceImpl() {}
+	
+	public static UserAccountService instance() {
+		return instance;
+	}
+	
+	public void initWithRepository(UserAccountRepository repository) {
+
+		// if repo is of the same type as before return
+		if(this.repository != null && this.repository.getClass().equals(repository))
+			return;
+		this.repository = repository;	
 	}
 	
 	@Override

@@ -28,7 +28,8 @@ public class Image {
 	private Bitmap fullscreen;
 	private Bitmap original;
 	private List<String> tags;
-	private ImageView view;
+	private ImageView thumbnailView;
+	private ImageView fullscreenView;
 	
 
 	public void setId(String id) {
@@ -55,16 +56,31 @@ public class Image {
 		this.tags = tags;
 	}
 	
-	public void setImageView(ImageView view) {
-		this.view = view;
-		updateView();
+	public void setThumbnailImageView(ImageView view) {
+		this.thumbnailView = view;
+		this.thumbnailView.setImageBitmap(thumbnail);
+		//updateView();
 		
 	}
 	
-	public void updateView() {
-		if(thumbnail != null && view != null)
-			view.setImageBitmap(thumbnail);
+	public void setFullscreenImageView(ImageView view) {
+		this.fullscreenView = view;
+		this.fullscreenView.setImageBitmap(fullscreen);
+		//updateView();
+		
 	}
+	
+	
+	public void updateThumbnailsView() {
+		if(thumbnail != null && thumbnailView != null)
+			thumbnailView.setImageBitmap(thumbnail);
+	}
+	
+	public void updateFullscreenView() {
+		if(fullscreen != null && fullscreenView != null)
+			fullscreenView.setImageBitmap(fullscreen);
+	}
+	
 	
 	/**
 	 * 
@@ -120,10 +136,8 @@ public class Image {
 							  .getInputStream());			
 			
 		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();

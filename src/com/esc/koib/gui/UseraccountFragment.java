@@ -3,6 +3,7 @@
  */
 package com.esc.koib.gui;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -14,6 +15,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
 import com.esc.koib.R;
 import com.esc.koib.domain.UserAccount;
 import com.esc.koib.repository.UserAccountRepository;
@@ -23,16 +26,16 @@ import com.esc.koib.service.UserAccountService;
 import com.esc.koib.service.impl.UserAccountServiceImpl;
 
 /**
+ * Fragment that handles the login functionality
+ * 
  * @author Valtteri Konttinen
  *
  */
 public class UseraccountFragment extends SherlockFragment implements View.OnClickListener, AccountServiceListener {
-
-	public interface OnLoggedInListener {
-		void OnUserAccountLoggedIn(UserAccount account);
-	}
 	
-	private OnLoggedInListener	delegate;
+	public static final String TAG = "USERACCOUNT_FRAGMENT";
+	
+	private OnLoggedInListener	listener;
 	private ProgressDialog 		progress;	
 	private UserAccountService 	accountService;
 	
@@ -42,6 +45,9 @@ public class UseraccountFragment extends SherlockFragment implements View.OnClic
 	private Button 		buttonLogin;
 	private Button 		buttonLogout;
 
+	public interface OnLoggedInListener {
+		void OnUserAccountLoggedIn(UserAccount account);
+	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, 
@@ -68,9 +74,23 @@ public class UseraccountFragment extends SherlockFragment implements View.OnClic
 		initAccountService();
 		updateViewElements();
 		    
+		getSherlockActivity().getSupportActionBar().hide();
+		getActivity().setTitle("Login");
+		
 		return view;    
 	}
 	
+	
+	
+
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		// TODO Auto-generated method stub
+		super.onCreateOptionsMenu(menu, inflater);
+	}
+
+
+
 
 	@Override
 	public void onClick(View v) {
@@ -82,22 +102,22 @@ public class UseraccountFragment extends SherlockFragment implements View.OnClic
 	}
 	
 	
-	/**
-	 * 
-	 * @param listener
-	 */
-	public void setLoggedInListener(OnLoggedInListener listener) {
+	@Override
+	public void onAttach(Activity activity) {
 		
-        try {
-        	
-            delegate = (OnLoggedInListener) listener;
-            
-        } catch (ClassCastException e) {
-            throw new ClassCastException(listener.toString()
-                    + " must implement OnLoggedInListener");
-        }
+		super.onAttach(activity);
+		
+		try {
+			
+			listener = (OnLoggedInListener)activity;
+			
+		} catch(ClassCastException e) {
+			
+			throw new ClassCastException(activity.toString() + " must implement OnLoggedInListener");
+		}
 	}
-	
+
+
 	/**
 	 * Collects the account data from the view and begins the login process
 	 */
@@ -148,7 +168,7 @@ public class UseraccountFragment extends SherlockFragment implements View.OnClic
 		displayMsg(msg);
 		
 		if(account != null)
-			delegate.OnUserAccountLoggedIn(account);
+			listener.OnUserAccountLoggedIn(account);
 	}
 	
 	
@@ -190,7 +210,8 @@ public class UseraccountFragment extends SherlockFragment implements View.OnClic
 	private void initAccountService() {
 		
 		UserAccountRepository repository = new UserAccountRepositoryFileImpl(getActivity());
-		accountService = new UserAccountServiceImpl(repository);
+		accountService = UserAccountServiceImpl.instance();
+		accountService.initWithRepository(repository);
 		accountService.setServiceListener(this);
 	}
 	
