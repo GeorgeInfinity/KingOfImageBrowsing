@@ -4,13 +4,18 @@
 package com.esc.koib.gui;
 
 import com.esc.koib.repository.ImageRepository;
+
+import android.R;
+import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 /**
  * Datasource adapter for Picasa albums
@@ -63,26 +68,24 @@ public class AlbumsAdapter extends BaseAdapter {
 	public View getView(int position, View convertView, ViewGroup parent) {
 		
 		ImageView imageView;
+		TextView textView;
 		
-        if (convertView == null) {  // if it's not recycled, initialize some attributes
-            imageView = new ImageView(context);
-            imageView.setLayoutParams(new GridView.LayoutParams(85, 85));
-            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            imageView.setPadding(8, 8, 8, 8);
+        if (convertView == null) {
+        	convertView = LayoutInflater.from(context).inflate(com.esc.koib.R.layout.album_item, null);
+        	imageView = (ImageView) convertView.findViewById(com.esc.koib.R.id.albumThumbnail);
         } else {
-            imageView = (ImageView) convertView;
+            imageView = (ImageView) convertView.findViewById(com.esc.koib.R.id.albumThumbnail);
         }
         
+        textView = (TextView) convertView.findViewById(com.esc.koib.R.id.albumName);
+        
+        textView.setText(repository.getAlbums().get(position).getDescription());
         imageView.setBackgroundColor(0XFF887766);
         imageView.setFocusable(false);
-
-        //imageView.setImageBitmap(repository.getAlbums().get(position).getIcon());//.setImageView(imageView);
         
         repository.getAlbums().get(position).setImageView(imageView);
         
-        Log.d("qwerty", "getView() called position=" + position);
-        
-        return imageView;
+        return convertView;
 	}
 
 }

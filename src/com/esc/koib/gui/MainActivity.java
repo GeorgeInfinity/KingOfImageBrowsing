@@ -498,12 +498,20 @@ public class MainActivity extends SherlockFragmentActivity implements OnLoggedIn
 			if(fragment instanceof KOIBFragment) {
 				if(fm.findFragmentByTag(((KOIBFragment)fragment).getKOIBTag()) == null) {
 					ft.replace(R.id.container, fragment, ((KOIBFragment)fragment).getKOIBTag());
-					// add to back stact with the tag name
+					// add to back stack with the tag name
 					ft.addToBackStack(((KOIBFragment)fragment).getKOIBTag());
 				}
 			} else {
 				ft.replace(R.id.container, fragment);
 				ft.addToBackStack(null);
+			}
+		} else {
+			if(fragment instanceof KOIBFragment) {
+				if(fm.findFragmentByTag(((KOIBFragment)fragment).getKOIBTag()) == null) {
+					ft.replace(R.id.container, fragment, ((KOIBFragment)fragment).getKOIBTag());
+				}
+			} else {
+				ft.replace(R.id.container, fragment);
 			}
 		}
 		
